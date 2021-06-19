@@ -31,12 +31,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.TrackRecordedActivity;
-import de.dennisguse.opentracks.adapters.SensorsAdapter;
+import de.dennisguse.opentracks.adapters.StatsAdapter;
 import de.dennisguse.opentracks.content.data.Track;
 import de.dennisguse.opentracks.content.provider.ContentProviderUtils;
 import de.dennisguse.opentracks.databinding.StatisticsRecordedBinding;
@@ -45,7 +42,6 @@ import de.dennisguse.opentracks.stats.TrackStatistics;
 import de.dennisguse.opentracks.util.PreferencesUtils;
 import de.dennisguse.opentracks.util.StringUtils;
 import de.dennisguse.opentracks.util.TrackIconUtils;
-import de.dennisguse.opentracks.viewmodels.SensorDataModel;
 
 /**
  * A fragment to display track statistics to the user for a recorded {@link Track}.
@@ -69,7 +65,7 @@ public class StatisticsRecordedFragment extends Fragment {
     }
 
     private SensorStatistics sensorStatistics;
-    private SensorsAdapter sensorsAdapter;
+    private StatsAdapter statsAdapter;
 
     private Track.Id trackId;
     @Nullable // Lazily loaded.
@@ -114,7 +110,7 @@ public class StatisticsRecordedFragment extends Fragment {
 
         sharedPreferences = PreferencesUtils.getSharedPreferences(getContext());
 
-        sensorsAdapter = new SensorsAdapter(getContext());
+        statsAdapter = new StatsAdapter(getContext());
     }
 
     @Override
@@ -123,7 +119,7 @@ public class StatisticsRecordedFragment extends Fragment {
 
         RecyclerView sensorsRecyclerView = viewBinding.statsSensorsRecyclerView;
         sensorsRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        sensorsRecyclerView.setAdapter(sensorsAdapter);
+        sensorsRecyclerView.setAdapter(statsAdapter);
 
         return viewBinding.getRoot();
     }
@@ -262,20 +258,20 @@ public class StatisticsRecordedFragment extends Fragment {
             return;
         }
 
-        List<SensorDataModel> sensorDataList = new ArrayList<>();
+        /*List<StatsData> sensorDataList = new ArrayList<>();
         if (sensorStatistics.hasHeartRate()) {
-            sensorDataList.add(new SensorDataModel(R.string.sensor_state_heart_rate_max, R.string.sensor_unit_beats_per_minute, sensorStatistics.getMaxHeartRate()));
-            sensorDataList.add(new SensorDataModel(R.string.sensor_state_heart_rate_avg, R.string.sensor_unit_beats_per_minute, sensorStatistics.getAvgHeartRate()));
+            sensorDataList.add(new StatsData(sensorStatistics.getMaxHeartRate(), R.string.sensor_unit_beats_per_minute, R.string.sensor_state_heart_rate_max));
+            sensorDataList.add(new StatsData(sensorStatistics.getAvgHeartRate(), R.string.sensor_unit_beats_per_minute, R.string.sensor_state_heart_rate_avg));
         }
         if (sensorStatistics.hasCadence()) {
-            sensorDataList.add(new SensorDataModel(R.string.sensor_state_cadence_max, R.string.sensor_unit_rounds_per_minute, sensorStatistics.getMaxCadence()));
-            sensorDataList.add(new SensorDataModel(R.string.sensor_state_cadence_avg, R.string.sensor_unit_rounds_per_minute, sensorStatistics.getAvgCadence()));
+            sensorDataList.add(new StatsData(sensorStatistics.getMaxCadence(), R.string.sensor_unit_rounds_per_minute, R.string.sensor_state_cadence_max));
+            sensorDataList.add(new StatsData(sensorStatistics.getAvgCadence(), R.string.sensor_unit_rounds_per_minute, R.string.sensor_state_cadence_avg));
         }
         if (sensorStatistics.hasPower()) {
-            sensorDataList.add(new SensorDataModel(R.string.sensor_state_power_avg, R.string.sensor_unit_power, sensorStatistics.getAvgPower()));
+            sensorDataList.add(new StatsData(sensorStatistics.getAvgPower(), R.string.sensor_unit_power, R.string.sensor_state_power_avg));
         }
         if (sensorDataList.size() > 0) {
-            sensorsAdapter.swapData(sensorDataList);
-        }
+            statsAdapter.swapData(sensorDataList);
+        }*/
     }
 }

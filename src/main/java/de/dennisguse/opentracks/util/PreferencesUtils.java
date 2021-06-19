@@ -26,6 +26,12 @@ import androidx.annotation.VisibleForTesting;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.preference.PreferenceManager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import de.dennisguse.opentracks.R;
 import de.dennisguse.opentracks.content.data.Distance;
 import de.dennisguse.opentracks.io.file.TrackFileFormat;
@@ -313,5 +319,38 @@ public class PreferencesUtils {
 
     public static boolean isDefaultExportDirectoryUri(SharedPreferences sharedPreferences, Context context) {
         return getDefaultExportDirectoryUri(sharedPreferences, context) != null;
+    }
+
+    public static LinkedHashMap<String, Boolean> getCustomLayout(SharedPreferences sharedPreferences, Context context) {
+        final String defaultOrder = Arrays.asList(context.getResources().getStringArray(R.array.stats_custom_layout_order_values)).stream().collect(Collectors.joining(";"));
+        final String defaultVisible = Arrays.asList(context.getResources().getStringArray(R.array.stats_custom_layout_visible_values)).stream().collect(Collectors.joining(";"));
+
+        final String orderValue = getString(sharedPreferences, context, R.string.stats_custom_layout_order_key, defaultOrder);
+        final String visibleValue = getString(sharedPreferences, context, R.string.stats_custom_layout_visible_key, defaultVisible);
+
+        List<String> orderItems = Arrays.asList(orderValue.split(";"));
+        List<String> visibleItems = Arrays.asList(visibleValue.split(";"));
+
+        LinkedHashMap<String, Boolean> map = new LinkedHashMap<>();
+        for (String orderItem : orderItems) {
+            map.put(orderItem, visibleItems.contains(orderItem));
+        }
+
+        return map;
+    }
+
+    public static void setCustomLayout(SharedPreferences sharedPreferences, Context context, LinkedHashMap<String, Boolean> items) {
+        List<String> orderValue = new ArrayList<>();
+        List<String> visibleValue = new ArrayList<>();
+
+        for (LinkedHashMap.Entry<String, Boolean> entry : items.entrySet()) {
+            orderValue.add(entry.getKey());
+            if (entry.getValue()) {
+                visibleValue.add(entry.getKey());
+            }
+        }
+
+        setString(sharedPreferences, context, R.string.stats_custom_layout_order_key, orderValue.stream().collect(Collectors.joining(";")));
+        setString(sharedPreferences, context, R.string.stats_custom_layout_visible_key, visibleValue.stream().collect(Collectors.joining(";")));
     }
 }
