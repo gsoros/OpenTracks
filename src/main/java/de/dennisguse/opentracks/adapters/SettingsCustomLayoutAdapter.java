@@ -15,6 +15,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import de.dennisguse.opentracks.R;
+import de.dennisguse.opentracks.util.ResourceUtils;
+import de.dennisguse.opentracks.util.StatsUtils;
 
 public class SettingsCustomLayoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -42,14 +44,11 @@ public class SettingsCustomLayoutAdapter extends RecyclerView.Adapter<RecyclerVi
         boolean isVisible = prefStatsItems.get(statTitle);
         viewHolder.itemView.setTag(position);
         viewHolder.title.setText(statTitle);
-        if (isVisible) {
-            viewHolder.title.setTextColor(context.getResources().getColor(R.color.colorAccent));
-            viewHolder.statusIcon.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_visibility_24));
-        } else {
-            viewHolder.title.setTextColor(context.getResources().getColor(android.R.color.secondary_text_dark));
-            viewHolder.statusIcon.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_visibility_off_24));
-        }
+        viewHolder.value.setText(StatsUtils.emptyValue(context, statTitle));
 
+        viewHolder.title.setTextAppearance(context, isVisible ? R.style.StatsLabel : R.style.StatsLabelNotVisible);
+        viewHolder.value.setTextAppearance(context, isVisible ? R.style.StatsValue : R.style.StatsValueNotVisible);
+        viewHolder.statusIcon.setImageDrawable(context.getDrawable(isVisible ? R.drawable.ic_baseline_visibility_24 : R.drawable.ic_baseline_visibility_off_24));
     }
 
     @Override
@@ -89,11 +88,15 @@ public class SettingsCustomLayoutAdapter extends RecyclerView.Adapter<RecyclerVi
 
     private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         final TextView title;
+        final TextView value;
+        final TextView unit;
         final ImageView statusIcon;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            title = itemView.findViewById(R.id.stats_custom_title);
+            title = itemView.findViewById(R.id.stats_desc_main);
+            value = itemView.findViewById(R.id.stats_value);
+            unit = itemView.findViewById(R.id.stats_unit);
             statusIcon = itemView.findViewById(R.id.stats_icon_show_status);
             itemView.setOnClickListener(this);
         }

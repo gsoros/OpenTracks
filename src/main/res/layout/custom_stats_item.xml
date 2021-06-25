@@ -8,8 +8,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp">
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
 
         <ImageView
             android:id="@+id/stats_iv_drag_indicator"
@@ -18,21 +18,19 @@
             android:src="@drawable/ic_baseline_drag_indicator_24"
             app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/stats_custom_title"
+            app:layout_constraintEnd_toStartOf="@id/stats_layout"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
 
-        <TextView
-            android:id="@+id/stats_custom_title"
+        <include
+            android:id="@+id/stats_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="@style/LargeLabel"
-            tools:text="Stats data field"
+            layout="@layout/stats_item"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toEndOf="@id/stats_iv_drag_indicator"
             app:layout_constraintEnd_toStartOf="@id/stats_icon_show_status"
-            app:layout_constraintTop_toTopOf="@id/stats_iv_drag_indicator"
-            app:layout_constraintBottom_toBottomOf="@id/stats_iv_drag_indicator" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/stats_icon_show_status"
@@ -41,9 +39,9 @@
             tools:src="@drawable/ic_baseline_visibility_24"
             android:layout_marginEnd="8dp"
             app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintTop_toTopOf="@id/stats_custom_title"
-            app:layout_constraintBottom_toBottomOf="@id/stats_custom_title"
-            app:layout_constraintStart_toEndOf="@id/stats_custom_title"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/stats_layout"
             app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

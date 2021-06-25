@@ -149,13 +149,21 @@ limitations under the License.
         <item name="android:textStyle">normal</item>
     </style>
 
+    <style name="StatsLabelNotVisible" parent="@style/StatsLabel">
+        <item name="android:textColor">@android:color/secondary_text_dark</item>
+    </style>
+
     <style name="StatsValue" parent="@style/TextLarge">
         <item name="android:layout_gravity">center</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">wrap_content</item>
         <item name="android:singleLine">true</item>
-        <item name="android:textSize">36sp</item>
+        <item name="android:textSize">32sp</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="StatsValueNotVisible" parent="@style/StatsValue">
+        <item name="android:textColor">@android:color/secondary_text_dark</item>
     </style>
     <!-- stats large value container -->
     <style name="StatsLargeValueContainer">

@@ -319,4 +319,9 @@
         <item>@string/stats_loss</item>
     </string-array>
 
+    <!-- Stats empty values -->
+    <string name="stats_empty_value_integer" translatable="false">0</string>
+    <string name="stats_empty_value_float" translatable="false">0.0</string>
+    <string name="stats_empty_value_time" translatable="false">00:00</string>
+
 </resources>

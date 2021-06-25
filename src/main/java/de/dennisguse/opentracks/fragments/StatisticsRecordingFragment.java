@@ -12,6 +12,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -27,6 +28,8 @@ import de.dennisguse.opentracks.services.TrackRecordingServiceConnection;
 import de.dennisguse.opentracks.util.PreferencesUtils;
 import de.dennisguse.opentracks.viewmodels.StatsData;
 import de.dennisguse.opentracks.viewmodels.StatsDataModel;
+
+import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 
 /**
  * A fragment to display track statistics to the user for a currently recording {@link Track}.
@@ -95,6 +98,7 @@ public class StatisticsRecordingFragment extends Fragment {
         viewBinding = StatisticsRecordingBinding.inflate(inflater, container, false);
 
         RecyclerView recyclerView = viewBinding.statsRecyclerView;
+        recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), RecyclerView.VERTICAL));
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getResources().getInteger(R.integer.stats_grid_columns)));
         recyclerView.setAdapter(statsAdapter);
 
