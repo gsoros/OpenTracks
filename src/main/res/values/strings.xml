@@ -356,6 +356,7 @@ limitations under the License.
     <string name="settings_chart_by_time">By time</string>
     <!-- Settings Recording -->
     <string name="settings_recording_customize_layout_title">Customize your recording layout</string>
+    <string name="settings_recording_customize_layout_select_columns">Data fields per row</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_title">Show statistics on lockscreen</string>
     <string name="settings_recording_show_on_lockscreen_while_recording_summary">While recording, show statistics without unlocking the device.</string>
     <string name="settings_recording_keep_screen_on_while_recording_title">Keep screen on</string>

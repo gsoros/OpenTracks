@@ -3,6 +3,8 @@ package de.dennisguse.opentracks.settings;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
@@ -24,6 +26,7 @@ public class SettingsCustomLayoutActivity extends AbstractActivity implements Se
     private SettingsCustomLayoutAdapter settingsCustomLayoutAdapter;
     private SharedPreferences sharedPreferences;
     private LinkedHashMap<String, Boolean> prefStatsItems = new LinkedHashMap<>();
+    private ArrayAdapter<Integer> spinnerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +36,7 @@ public class SettingsCustomLayoutActivity extends AbstractActivity implements Se
         prefStatsItems = PreferencesUtils.getCustomLayout(sharedPreferences, this);
         settingsCustomLayoutAdapter = new SettingsCustomLayoutAdapter(this, this, prefStatsItems);
 
-        RecyclerView recyclerView = viewBinding.recyclerView;
+        RecyclerView recyclerView = viewBinding.recyclerViewVisible;
         recyclerView.setLayoutManager(new GridLayoutManager(this, getResources().getInteger(R.integer.stats_grid_columns)));
         recyclerView.setAdapter(settingsCustomLayoutAdapter);
 
@@ -54,6 +57,22 @@ public class SettingsCustomLayoutActivity extends AbstractActivity implements Se
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
         itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, new Integer[]{1, 2, 3});
+        viewBinding.spinnerOptions.setAdapter(spinnerAdapter);
+        viewBinding.spinnerOptions.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                recyclerView.setLayoutManager(new GridLayoutManager(SettingsCustomLayoutActivity.this, position + 1));
+                PreferencesUtils.setLayoutColumns(sharedPreferences, SettingsCustomLayoutActivity.this, position + 1);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        viewBinding.spinnerOptions.setSelection(PreferencesUtils.getLayoutColumns(sharedPreferences, SettingsCustomLayoutActivity.this) - 1);
     }
 
     @Override

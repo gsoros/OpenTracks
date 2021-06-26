@@ -129,6 +129,12 @@ public class PreferencesUtils {
         editor.apply();
     }
 
+    public static void setInt(SharedPreferences sharedPreferences, Context context, int keyId, int value) {
+        Editor editor = sharedPreferences.edit();
+        editor.putInt(getKey(context, keyId), value);
+        editor.apply();
+    }
+
     public static boolean isMetricUnits(SharedPreferences sharedPreferences, Context context) {
         final String STATS_UNIT = context.getString(R.string.stats_units_default);
         return STATS_UNIT.equals(getString(sharedPreferences, context, R.string.stats_units_key, STATS_UNIT));
@@ -319,6 +325,14 @@ public class PreferencesUtils {
 
     public static boolean isDefaultExportDirectoryUri(SharedPreferences sharedPreferences, Context context) {
         return getDefaultExportDirectoryUri(sharedPreferences, context) != null;
+    }
+
+    public static int getLayoutColumns(SharedPreferences sharedPreferences, Context context) {
+        return getInt(sharedPreferences, context, R.string.stats_custom_layout_columns_key, context.getResources().getInteger(R.integer.stats_custom_layout_columns_default));
+    }
+
+    public static void setLayoutColumns(SharedPreferences sharedPreferences, Context context, int columns) {
+        setInt(sharedPreferences, context, R.string.stats_custom_layout_columns_key, columns);
     }
 
     public static LinkedHashMap<String, Boolean> getCustomLayout(SharedPreferences sharedPreferences, Context context) {

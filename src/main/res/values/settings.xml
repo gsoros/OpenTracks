@@ -279,7 +279,10 @@
     </string-array>
 
     <!-- Stats layout customization -->
-    <string name="stats_custom_layout_key" translatable="false">statsCustomLayout</string>
+    <string name="stats_custom_layout_key" translatable="false">statsCustomLayoutKey</string>
+
+    <string name="stats_custom_layout_columns_key" translatable="false">statsCustomLayoutColumnsKey</string>
+    <integer name="stats_custom_layout_columns_default" translatable="false">3</integer>
 
     <string name="stats_custom_layout_order_key" translatable="false">statsCustomLayoutOrderKey</string>
     <string-array name="stats_custom_layout_order_values">
