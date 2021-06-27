@@ -4,6 +4,9 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import de.dennisguse.opentracks.R;
 
 public class StatsUtils {
@@ -16,5 +19,15 @@ public class StatsUtils {
         } else {
             return context.getString(R.string.stats_empty_value_integer);
         }
+    }
+
+    public static LinkedHashMap<String, Boolean> filterVisible(LinkedHashMap<String, Boolean> map, boolean visible) {
+        LinkedHashMap<String, Boolean> result = new LinkedHashMap<>();
+        for (Map.Entry<String, Boolean> entry : map.entrySet()) {
+            if (entry.getValue() == visible) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return result;
     }
 }

@@ -15,7 +15,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import de.dennisguse.opentracks.R;
-import de.dennisguse.opentracks.util.ResourceUtils;
 import de.dennisguse.opentracks.util.StatsUtils;
 
 public class SettingsCustomLayoutAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -42,13 +41,15 @@ public class SettingsCustomLayoutAdapter extends RecyclerView.Adapter<RecyclerVi
         SettingsCustomLayoutAdapter.ViewHolder viewHolder = (SettingsCustomLayoutAdapter.ViewHolder) holder;
         String statTitle = (String) prefStatsItems.keySet().toArray()[position];
         boolean isVisible = prefStatsItems.get(statTitle);
-        viewHolder.itemView.setTag(position);
+        viewHolder.itemView.setTag(statTitle);
         viewHolder.title.setText(statTitle);
         viewHolder.value.setText(StatsUtils.emptyValue(context, statTitle));
 
         viewHolder.title.setTextAppearance(context, isVisible ? R.style.StatsLabel : R.style.StatsLabelNotVisible);
         viewHolder.value.setTextAppearance(context, isVisible ? R.style.StatsValue : R.style.StatsValueNotVisible);
-        viewHolder.statusIcon.setImageDrawable(context.getDrawable(isVisible ? R.drawable.ic_baseline_visibility_24 : R.drawable.ic_baseline_visibility_off_24));
+        viewHolder.statusIcon.setVisibility(isVisible ? View.GONE : View.VISIBLE);
+        viewHolder.statusIcon.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_visibility_off_24));
+        viewHolder.moveIcon.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -91,6 +92,7 @@ public class SettingsCustomLayoutAdapter extends RecyclerView.Adapter<RecyclerVi
         final TextView value;
         final TextView unit;
         final ImageView statusIcon;
+        final ImageView moveIcon;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -98,13 +100,13 @@ public class SettingsCustomLayoutAdapter extends RecyclerView.Adapter<RecyclerVi
             value = itemView.findViewById(R.id.stats_value);
             unit = itemView.findViewById(R.id.stats_unit);
             statusIcon = itemView.findViewById(R.id.stats_icon_show_status);
+            moveIcon = itemView.findViewById(R.id.stats_iv_drag_indicator);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            int position = (int) view.getTag();
-            String statTitle = (String) prefStatsItems.keySet().toArray()[position];
+            String statTitle = (String) view.getTag();
             itemClickListener.onSettingsCustomLayoutItemClicked(statTitle);
         }
     }
