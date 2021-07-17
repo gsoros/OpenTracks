@@ -14,7 +14,8 @@ import de.dennisguse.opentracks.util.UintUtils;
 import de.dennisguse.opentracks.util.UnitConversions;
 
 /**
- * Provides cadence in rpm and speed in milliseconds from Bluetooth LE Cycling Cadence and Speed sensors.
+ * Provides cadence in rpm and speed in milliseconds from Bluetooth LE Cycling
+ * Cadence and Speed sensors.
  */
 public final class SensorDataCycling {
 
@@ -25,7 +26,7 @@ public final class SensorDataCycling {
 
     public static class Cadence extends SensorData<Float> {
 
-        private final Long crankRevolutionsCount; // UINT32
+        private final Integer crankRevolutionsCount; // UINT16
         private final Integer crankRevolutionsTime; // UINT16; 1/1024s
 
         public Cadence(String sensorAddress) {
@@ -34,7 +35,7 @@ public final class SensorDataCycling {
             this.crankRevolutionsTime = null;
         }
 
-        public Cadence(String sensorAddress, String sensorName, long crankRevolutionsCount, int crankRevolutionsTime) {
+        public Cadence(String sensorAddress, String sensorName, int crankRevolutionsCount, int crankRevolutionsTime) {
             super(sensorAddress, sensorName);
             this.crankRevolutionsCount = crankRevolutionsCount;
             this.crankRevolutionsTime = crankRevolutionsTime;
@@ -44,14 +45,15 @@ public final class SensorDataCycling {
          * Workaround for Wahoo CADENCE: provides speed instead of cadence
          */
         public Cadence(@NonNull DistanceSpeed speed) {
-            this(speed.getSensorAddress(), speed.getSensorName(), speed.wheelRevolutionsCount, speed.wheelRevolutionsTime);
+            this(speed.getSensorAddress(), speed.getSensorName(), speed.wheelRevolutionsCount.intValue(),
+                    speed.wheelRevolutionsTime);
         }
 
         public boolean hasData() {
             return crankRevolutionsCount != null && crankRevolutionsTime != null;
         }
 
-        public long getCrankRevolutionsCount() {
+        public int getCrankRevolutionsCount() {
             return crankRevolutionsCount;
         }
 
@@ -60,32 +62,45 @@ public final class SensorDataCycling {
         }
 
         public void compute(Cadence previous) {
-            if (hasData() && previous != null && previous.hasData()) {
-                float timeDiff_ms = UintUtils.diff(crankRevolutionsTime, previous.crankRevolutionsTime, UintUtils.UINT16_MAX) / 1024f * UnitConversions.S_TO_MS;
-                if (timeDiff_ms <= 0) {
-                    Log.e(TAG, "Timestamps difference is invalid: cannot compute cadence.");
-                    value = null;
-                } else {
-                    long crankDiff = UintUtils.diff(crankRevolutionsCount, previous.crankRevolutionsCount, UintUtils.UINT32_MAX);
-                    float cadence_ms = crankDiff / timeDiff_ms;
-                    value = (float) (cadence_ms / UnitConversions.MS_TO_S / UnitConversions.S_TO_MIN);
-                }
+            if (!hasData() || previous == null || !previous.hasData()) {
+                Log.e(TAG, "Missing data: cannot compute cadence.");
+                value = null;
+                return;
             }
+            float timeDiff_ms = UintUtils.diff(crankRevolutionsTime, previous.crankRevolutionsTime,
+                    UintUtils.UINT16_MAX) / 1024f * UnitConversions.S_TO_MS;
+            if (timeDiff_ms <= 0) {
+                Log.e(TAG, "Timestamps difference is invalid: cannot compute cadence.");
+                value = previous.value;
+                return;
+            }
+            int crankDiff = (int)UintUtils.diff(crankRevolutionsCount, previous.crankRevolutionsCount, UintUtils.UINT16_MAX);
+            if (crankDiff <= 0) {
+                Log.e(TAG, "Crank revolution counter difference is invalid: cannot compute cadence.");
+                value = previous.value;
+                return;
+            }
+            float cadence_ms = crankDiff / timeDiff_ms;
+            value = (float) (cadence_ms / UnitConversions.MS_TO_S / UnitConversions.S_TO_MIN);
+
         }
 
         @NonNull
         @Override
         public String toString() {
-            return super.toString() + " cadence=" + value + " time=" + crankRevolutionsTime + " count=" + crankRevolutionsCount;
+            return super.toString() + " cadence=" + value + " time=" + crankRevolutionsTime + " count="
+                    + crankRevolutionsCount;
         }
 
         @Override
         public boolean equals(@Nullable Object obj) {
-            if (!(obj instanceof Cadence)) return false;
+            if (!(obj instanceof Cadence))
+                return false;
 
             Cadence comp = (Cadence) obj;
             if (hasData() && comp.hasData() == hasData()) {
-                return getCrankRevolutionsCount() == comp.getCrankRevolutionsCount() && getCrankRevolutionsTime() == comp.getCrankRevolutionsTime();
+                return getCrankRevolutionsCount() == comp.getCrankRevolutionsCount()
+                        && getCrankRevolutionsTime() == comp.getCrankRevolutionsTime();
             } else {
                 return false;
             }
@@ -103,7 +118,8 @@ public final class SensorDataCycling {
             this.wheelRevolutionsTime = null;
         }
 
-        public DistanceSpeed(String sensorAddress, String sensorName, long wheelRevolutionsCount, int wheelRevolutionsTime) {
+        public DistanceSpeed(String sensorAddress, String sensorName, long wheelRevolutionsCount,
+                int wheelRevolutionsTime) {
             super(sensorAddress, sensorName);
             this.wheelRevolutionsCount = wheelRevolutionsCount;
             this.wheelRevolutionsTime = wheelRevolutionsTime;
@@ -123,7 +139,8 @@ public final class SensorDataCycling {
 
         public void compute(DistanceSpeed previous, Distance wheelCircumference) {
             if (hasData() && previous != null && previous.hasData()) {
-                float timeDiff_ms = UintUtils.diff(wheelRevolutionsTime, previous.wheelRevolutionsTime, UintUtils.UINT16_MAX) / 1024f * UnitConversions.S_TO_MS;
+                float timeDiff_ms = UintUtils.diff(wheelRevolutionsTime, previous.wheelRevolutionsTime,
+                        UintUtils.UINT16_MAX) / 1024f * UnitConversions.S_TO_MS;
                 Duration timeDiff = Duration.ofMillis((long) timeDiff_ms);
                 if (timeDiff.isZero() || timeDiff.isNegative()) {
                     Log.e(TAG, "Timestamps difference is invalid: cannot compute speed.");
@@ -131,7 +148,8 @@ public final class SensorDataCycling {
                     return;
                 }
 
-                long wheelDiff = UintUtils.diff(wheelRevolutionsCount, previous.wheelRevolutionsCount, UintUtils.UINT32_MAX);
+                long wheelDiff = UintUtils.diff(wheelRevolutionsCount, previous.wheelRevolutionsCount,
+                        UintUtils.UINT32_MAX);
 
                 Distance distance = wheelCircumference.multipliedBy(wheelDiff);
                 Distance distanceOverall = distance;
@@ -153,19 +171,22 @@ public final class SensorDataCycling {
         @NonNull
         @Override
         public String toString() {
-            return super.toString() + " data=" + value + " time=" + wheelRevolutionsTime + " count=" + wheelRevolutionsCount;
+            return super.toString() + " data=" + value + " time=" + wheelRevolutionsTime + " count="
+                    + wheelRevolutionsCount;
         }
 
         @Override
         public boolean equals(@Nullable Object obj) {
-            if (!(obj instanceof DistanceSpeed)) return false;
+            if (!(obj instanceof DistanceSpeed))
+                return false;
 
             DistanceSpeed comp = (DistanceSpeed) obj;
             if (!(hasData() && comp.hasData())) {
                 return false;
             }
 
-            return getWheelRevolutionsCount() == comp.getWheelRevolutionsCount() && getWheelRevolutionsTime() == comp.getWheelRevolutionsTime();
+            return getWheelRevolutionsCount() == comp.getWheelRevolutionsCount()
+                    && getWheelRevolutionsTime() == comp.getWheelRevolutionsTime();
         }
 
         public static class Data {
@@ -181,18 +202,16 @@ public final class SensorDataCycling {
 
             @Override
             public String toString() {
-                return "Data{" +
-                        "distance_m=" + distance +
-                        ", distance_overall_m=" + distanceOverall +
-                        ", speed_mps=" + speed +
-                        '}';
+                return "Data{" + "distance_m=" + distance + ", distance_overall_m=" + distanceOverall + ", speed_mps="
+                        + speed + '}';
             }
         }
     }
 
     public static class CadenceAndSpeed extends SensorData<Pair<Cadence, DistanceSpeed>> {
 
-        public CadenceAndSpeed(String sensorAddress, String sensorName, @Nullable Cadence cadence, @Nullable DistanceSpeed distanceSpeed) {
+        public CadenceAndSpeed(String sensorAddress, String sensorName, @Nullable Cadence cadence,
+                @Nullable DistanceSpeed distanceSpeed) {
             super(sensorAddress, sensorName);
             this.value = new Pair<>(cadence, distanceSpeed);
         }
@@ -206,4 +225,3 @@ public final class SensorDataCycling {
         }
     }
 }
-
