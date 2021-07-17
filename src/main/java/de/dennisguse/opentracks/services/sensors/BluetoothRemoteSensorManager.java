@@ -85,15 +85,13 @@ public class BluetoothRemoteSensorManager implements BluetoothConnectionManager.
                 connect(cyclingCadence, address);
             }
 
-            if (PreferencesUtils.isKey(context, R.string.settings_sensor_bluetooth_cycling_cadence_key, key)) {
+            if (PreferencesUtils.isKey(context, R.string.settings_sensor_bluetooth_cycling_speed_key, key)) {
                 String address = PreferencesUtils.getBluetoothCyclingSpeedSensorAddress(sharedPreferences, context);
-
                 connect(cyclingSpeed, address);
             }
 
             if (PreferencesUtils.isKey(context, R.string.settings_sensor_bluetooth_cycling_power_key, key)) {
                 String address = PreferencesUtils.getBluetoothCyclingPowerSensorAddress(sharedPreferences, context);
-
                 connect(cyclingPower, address);
             }
 
